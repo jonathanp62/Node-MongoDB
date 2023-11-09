@@ -7,6 +7,8 @@
  * All Rights Reserved.
  */
 
+import { Config } from "../config.mjs";
+
 import mongo from 'mongodb';
 
 /**
@@ -14,22 +16,40 @@ import mongo from 'mongodb';
  */
 class LocalDemo {
     /**
+     * The configuration.
+     *
+     * @param   {Config}    Config
+     */
+    constructor(Config) {
+        this._config = Config;
+    }
+
+    /**
      * The run method.
      */
     run() {
-        console.log('Hello from local.demo');
+        this.firstQuery();
+    }
 
-        const mongoDB = 'mongodb://localhost:27017';
-        const mongoClient = new mongo.MongoClient(mongoDB);
+    /**
+     * Connect, query, and close.
+     */
+    firstQuery() {
+        const mongoUrl = this._config.mongo.url;
+        const mongoClient = new mongo.MongoClient(mongoUrl);
+        const mongoDB = this._config.mongo.database;
+        const mongoCollection = this._config.collections.demo;
 
         async function query() {
             try {
-                const database = mongoClient.db('local');
-                const collection = database.collection('demo');
+                const database = mongoClient.db(mongoDB);
+                const collection = database.collection(mongoCollection);
                 const filter = { prodId: 100 };
-                const items = await collection.findOne(filter);
+                const item = await collection.findOne(filter);
 
-                console.log(items);
+                console.log(`Connected to ${mongoUrl}/${mongoDB}`);
+                console.log(`From the ${mongoCollection} collection`);
+                console.log(item);
             } finally {
                 await mongoClient.close();
             }

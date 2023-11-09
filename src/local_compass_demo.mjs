@@ -7,15 +7,55 @@
  * All Rights Reserved.
  */
 
+import { Config } from "../config.mjs";
+
+import mongo from 'mongodb';
+
 /**
  * The demonstration class for the local.compass.demo database/collection.
  */
 class LocalCompassDemo {
     /**
+     * The configuration.
+     *
+     * @param   {Config}    Config
+     */
+    constructor(Config) {
+        this._config = Config;
+    }
+
+    /**
      * The run method.
      */
     run() {
-        console.log('Hello from local.compass.demo');
+        this.firstQuery();
+    }
+
+    /**
+     * Connect, query, and close.
+     */
+    firstQuery() {
+        const mongoUrl = this._config.mongo.url;
+        const mongoClient = new mongo.MongoClient(mongoUrl);
+        const mongoDB = this._config.mongo.database;
+        const mongoCollection = this._config.collections.compassDemo;
+
+        async function query() {
+            try {
+                const database = mongoClient.db(mongoDB);
+                const collection = database.collection(mongoCollection);
+                const filter = { name: 'Andrea Le' };
+                const item = await collection.findOne(filter);
+
+                console.log(`Connected to ${mongoUrl}/${mongoDB}`);
+                console.log(`From the ${mongoCollection} collection`);
+                console.log(item);
+            } finally {
+                await mongoClient.close();
+            }
+        }
+
+        query().catch(console.dir);
     }
 }
 
