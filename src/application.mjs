@@ -7,6 +7,9 @@
  * All Rights Reserved.
  */
 
+import { LocalCompassDemo } from './local_compass_demo.mjs';
+import { LocalDemo } from './local_demo.mjs';
+
 /**
  * The application class.
  */
@@ -15,7 +18,11 @@ class Application {
      * The run method.
      */
     run() {
-        console.log('Hello');
+        const localDemo = new LocalDemo();
+        const localCompassDemo = new LocalCompassDemo();
+
+        localDemo.run();
+        localCompassDemo.run();
     }
 }
 

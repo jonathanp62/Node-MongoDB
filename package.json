@@ -17,5 +17,8 @@
   },
   "author": "Jonathan Parker",
   "license": "ISC",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "mongodb": "^6.2.0"
+  }
 }
