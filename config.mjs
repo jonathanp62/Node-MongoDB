@@ -12,7 +12,7 @@
  */
 const Config = {
     mongo: {
-        url: 'mongodb://localhost:27017',
+        uri: 'mongodb://localhost:27017',
         database: 'local'
     },
     collections: {

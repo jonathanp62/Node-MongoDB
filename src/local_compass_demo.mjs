@@ -35,8 +35,8 @@ class LocalCompassDemo {
      * Connect, query, and close.
      */
     firstQuery() {
-        const mongoUrl = this._config.mongo.url;
-        const mongoClient = new mongo.MongoClient(mongoUrl);
+        const mongoUri = this._config.mongo.uri;
+        const mongoClient = new mongo.MongoClient(mongoUri);
         const mongoDB = this._config.mongo.database;
         const mongoCollection = this._config.collections.compassDemo;
 
@@ -47,7 +47,7 @@ class LocalCompassDemo {
                 const filter = { name: 'Andrea Le' };
                 const item = await collection.findOne(filter);
 
-                console.log(`Connected to ${mongoUrl}/${mongoDB}`);
+                console.log(`Connected to ${mongoUri}/${mongoDB}`);
                 console.log(`From the ${mongoCollection} collection`);
                 console.log(item);
             } finally {
