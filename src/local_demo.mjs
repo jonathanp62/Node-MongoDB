@@ -22,6 +22,8 @@ class LocalDemo {
      */
     constructor(Config) {
         this._config = Config;
+
+        this._mongoClient = new mongo.MongoClient(this._config.mongo.uri);
     }
 
     /**
@@ -29,33 +31,51 @@ class LocalDemo {
      */
     run() {
         this.firstQuery();
+        this.secondQuery();
     }
 
     /**
      * Connect, query, and close.
      */
     firstQuery() {
-        const mongoUri = this._config.mongo.uri;
-        const mongoClient = new mongo.MongoClient(mongoUri);
-        const mongoDB = this._config.mongo.database;
-        const mongoCollection = this._config.collections.demo;
-
-        async function query() {
+        async function query(config, mongoClient) {
             try {
-                const database = mongoClient.db(mongoDB);
-                const collection = database.collection(mongoCollection);
-                const filter = { prodId: 100 };
+                const database = mongoClient.db(config.mongo.database);
+                const collection = database.collection(config.collections.demo);
+                const filter = {prodId: 100};
                 const item = await collection.findOne(filter);
 
-                console.log(`Connected to ${mongoUri}/${mongoDB}`);
-                console.log(`From the ${mongoCollection} collection`);
+                console.log(`1st: Connected to ${config.mongo.uri}/${config.mongo.database}`);
+                console.log(`From the ${config.collections.demo} collection`);
                 console.log(item);
             } finally {
                 await mongoClient.close();
+                console.log(`1st: Disconnected from ${config.mongo.uri}/${config.mongo.database}`);
             }
         }
 
-        query().catch(console.dir);
+        query(this._config, this._mongoClient).catch(console.dir);
+    }
+
+    secondQuery() {
+        async function query(config, mongoClient) {
+            try {
+                console.log(`2nd: Connected to ${config.mongo.uri}/${config.mongo.database}`);
+
+                const database = mongoClient.db(config.mongo.database);
+                const collection = database.collection(config.collections.demo);
+                const filter = {};
+                const items = await collection.find(filter);
+
+                for await (const item of items) {
+                    console.log(item);
+                }
+            } finally {
+                mongoClient.close().then(() => console.log(`2nd: Disconnected from ${config.mongo.uri}/${config.mongo.database}`));
+            }
+        }
+
+        query(this._config, this._mongoClient).catch(console.dir);
     }
 }
 
