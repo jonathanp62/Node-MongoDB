@@ -19,12 +19,16 @@ class Application {
      * The run method.
      */
     run() {
-        const localDemo = new LocalDemo(Config);
-        const localCompassDemo = new LocalCompassDemo(Config);
-
-        localDemo.run();
-        localCompassDemo.run();
+        demo().then(() => compassDemo());
     }
+}
+
+async function demo() {
+    new LocalDemo(Config).run();
+}
+
+async function compassDemo() {
+    new LocalCompassDemo(Config).run();
 }
 
 export { Application };

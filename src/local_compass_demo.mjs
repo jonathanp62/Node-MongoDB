@@ -22,40 +22,45 @@ class LocalCompassDemo {
      */
     constructor(Config) {
         this._config = Config;
+
+        this._mongoClient = new mongo.MongoClient(this._config.mongo.uri);
     }
 
     /**
      * The run method.
      */
     run() {
-        this.firstQuery();
+        start(this._config)
+            .then(() => firstQuery(this._config, this._mongoClient))
+            .then(() => secondQuery(this._config, this._mongoClient))
+            .then(() => this._mongoClient.close())
+            .then(() => console.log(`Disconnected from ${this._config.mongo.uri}/${this._config.mongo.database}`))
+            .catch(console.dir);
     }
+}
 
-    /**
-     * Connect, query, and close.
-     */
-    firstQuery() {
-        const mongoUri = this._config.mongo.uri;
-        const mongoClient = new mongo.MongoClient(mongoUri);
-        const mongoDB = this._config.mongo.database;
-        const mongoCollection = this._config.collections.compassDemo;
+async function start(config) {
+    console.log(`Connected to ${config.mongo.uri}/${config.mongo.database}`);
+    console.log(`From the ${config.collections.compassDemo} collection`);
+}
 
-        async function query() {
-            try {
-                const database = mongoClient.db(mongoDB);
-                const collection = database.collection(mongoCollection);
-                const filter = { name: 'Andrea Le' };
-                const item = await collection.findOne(filter);
+async function firstQuery(config, mongoClient) {
+    const database = mongoClient.db(config.mongo.database);
+    const collection = database.collection(config.collections.compassDemo);
+    const filter = { name: 'Andrea Le' };
+    const item = await collection.findOne(filter);
 
-                console.log(`Connected to ${mongoUri}/${mongoDB}`);
-                console.log(`From the ${mongoCollection} collection`);
-                console.log(item);
-            } finally {
-                await mongoClient.close();
-            }
-        }
+    console.log(item);
+}
 
-        query().catch(console.dir);
+async function secondQuery(config, mongoClient) {
+    const database = mongoClient.db(config.mongo.database);
+    const collection = database.collection(config.collections.compassDemo);
+    const filter = {};
+    const items = await collection.find(filter);
+
+    for await (const item of items) {
+        console.log(item);
     }
 }
 
