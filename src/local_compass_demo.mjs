@@ -30,12 +30,15 @@ class LocalCompassDemo {
      * The run method.
      */
     run() {
-        start(this._config)
-            .then(() => firstQuery(this._config, this._mongoClient))
-            .then(() => secondQuery(this._config, this._mongoClient))
-            .then(() => this._mongoClient.close())
-            .then(() => console.log(`Disconnected from ${this._config.mongo.uri}/${this._config.mongo.database}`))
-            .catch(console.dir);
+        return new Promise(resolve => {
+            start(this._config)
+                .then(() => firstQuery(this._config, this._mongoClient))
+                .then(() => secondQuery(this._config, this._mongoClient))
+                .then(() => this._mongoClient.close())
+                .then(() => console.log(`Disconnected from ${this._config.mongo.uri}/${this._config.mongo.database}`))
+                .catch(console.dir)
+                .finally(() => resolve());
+        });
     }
 }
 
