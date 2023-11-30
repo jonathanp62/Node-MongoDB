@@ -2,9 +2,11 @@
  * (#)local_compass_demo.mjs    1.0.0   11/09/2023
  *
  * Copyright (c) Jonathan M. Parker
- * 324 Lantana Drive
- * Owings Mills, MD  21117 U.S.A
  * All Rights Reserved.
+ * 
+ * @author    Jonathan Parker
+ * @version   1.0.0
+ * @since     1.0.0
  */
 
 import { Config } from "../config.mjs";
